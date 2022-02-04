@@ -28,6 +28,7 @@ function Settings(props){
         if(buttonSave.style["background-color"] !== "lightGreen")
             buttonSave.style["background-color"] = "lightGreen";
     }
+
     function addBoat(){
         setBoatList([
             ...boatList,
@@ -62,7 +63,7 @@ function Settings(props){
                         name={idName}
                         onChange={(target)=>updateValue(target,index)} 
                         type="text" 
-                        defaultValue={boat.name}></input>
+                        value={boat.name}></input>
                     <br/>
                     <label htmlFor={idSize}>Taille : </label>
                     <input 
@@ -70,7 +71,7 @@ function Settings(props){
                         nae={idSize}
                         onChange={(target)=>updateValue(target,index)} 
                         type="number" 
-                        defaultValue={boat.size}></input>
+                        value={boat.size}></input>
                     <button onClick={() => deleteBoat(index)}>Delete</button>
                 </li>
             )
