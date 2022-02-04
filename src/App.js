@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {Component } from 'react';
+import boats from './data/boats.json';
+import Game from './Game';
+import {Link, Route, Routes } from 'react-router-dom';
+import Settings from './Settings';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+
+  constructor(props){
+    super(props);
+    this.state={
+      size : 8,
+      boats : boats,
+    }
+  }
+
+  saveBoats(boats){
+    console.log("App handle submit");
+    this.setState({
+      boats:boats,
+    })
+  }
+
+  render (){
+    return(
+      <div className='App'>
+        <nav>
+          <Link to="/game">Jeu</Link>
+          <Link to="/settings">Settings</Link>
+        </nav>
+        <div className='outlet'>
+          <Routes>
+            <Route path="/game" element={<Game boats = {this.state.boats} size = {this.state.size}/>} />
+            <Route path="/settings" element={<Settings boats = {this.state.boats} onClick={(boats) => this.saveBoats(boats)} />} />
+          </Routes>
+          {/* <Outlet context = {[this.state.boats,this.state.size]}/> */}
+        </div>
+      </div>
+    )
+  }
 }
 
 export default App;

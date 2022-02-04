@@ -1,17 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {Routes, Route, Link,  BrowserRouter as Router} from 'react-router-dom';
 import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+import Rules from './Rules';
 
-ReactDOM.render(
+const routs = (
   <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+    < Router >
+    <nav>
+      <Link to="/">App</Link>
+      <Link to="/rules">Rules</Link>
+    </nav>
+    <h1>BATTLESHIP</h1>
+    <Routes>
+      <Route path="/*" element={<App/>}>
+        {/* <Route path="/game" element ={<Game/>} />
+        <Route path="/settings" element ={<Settings/>} /> */}
+      </Route>
+      <Route path ="/rules" element={<Rules/>} />
+    </Routes>
+  </Router>
+  </React.StrictMode>
+)
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+ReactDOM.render(routs,document.getElementById('root'));
