@@ -3,6 +3,7 @@ import boats from './data/boats.json';
 import Game from './Game';
 import {Link, Route, Routes } from 'react-router-dom';
 import Settings from './Settings';
+import Rules from './Rules';
 
 class App extends Component {
 
@@ -27,13 +28,14 @@ class App extends Component {
         <nav>
           <Link to="/game">Jeu</Link>
           <Link to="/settings">Settings</Link>
+          <Link to="/rules">Rules</Link>
         </nav>
         <div className='outlet'>
           <Routes>
             <Route path="/game" element={<Game boats = {this.state.boats} size = {this.state.size}/>} />
             <Route path="/settings" element={<Settings boats = {this.state.boats} onClick={(boats) => this.saveBoats(boats)} />} />
+            <Route path="/rules" element={<Rules/>} />
           </Routes>
-          {/* <Outlet context = {[this.state.boats,this.state.size]}/> */}
         </div>
       </div>
     )
