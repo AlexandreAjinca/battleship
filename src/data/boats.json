@@ -1,22 +1,22 @@
 [
-    {
-      "name":"porte-avion",
-      "size":5
-    },
-    {
-      "name":"croiseur",
-      "size":4
-    },
-    {
-      "name":"contre-torpilleur",
-      "size":3
-    },
-    {
-      "name":"sous-marin",
-      "size":3
-    },
-    {
-      "name":"torpilleur",
-      "size":2
-    }
+	{
+		"name": "porte-avion",
+		"size": 5
+	},
+	{
+		"name": "croiseur",
+		"size": 4
+	},
+	{
+		"name": "contre-torpilleur",
+		"size": 3
+	},
+	{
+		"name": "sous-marin",
+		"size": 3
+	},
+	{
+		"name": "torpilleur",
+		"size": 2
+	}
 ]
