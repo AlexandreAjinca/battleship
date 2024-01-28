@@ -1,12 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-function Settings(props) {
-	const [boatList, setBoatList] = useState(props.boats.map((a) => ({ ...a })));
+const Settings = (props: { boats: any; setBoats: any }) => {
+	const [boatList, setBoatList] = useState(props.boats);
 	const [text, setText] = useState("");
-
-	useEffect(() => {
-		console.log(" effect triggered");
-	});
 
 	function updateValue(target, index) {
 		const id = target.target.id;
@@ -17,16 +13,16 @@ function Settings(props) {
 		} else if (id.includes("Size")) {
 			newBoatList[index].size = Number.parseInt(value);
 		}
-		colorButtonSave();
+		// colorButtonSave();
 		setBoatList(newBoatList);
 		setText(id + " modifié");
 	}
 
-	function colorButtonSave() {
-		var buttonSave = document.getElementById("buttonSaveBoats");
-		if (buttonSave.style["background-color"] !== "lightGreen")
-			buttonSave.style["background-color"] = "lightGreen";
-	}
+	// function colorButtonSave() {
+	// 	var buttonSave = document.getElementById("buttonSaveBoats");
+	// 	if (buttonSave.style["background-color"] !== "lightGreen")
+	// 		buttonSave.style["background-color"] = "lightGreen";
+	// }
 
 	function addBoat() {
 		setBoatList([
@@ -36,7 +32,7 @@ function Settings(props) {
 				size: 1,
 			},
 		]);
-		colorButtonSave();
+		// colorButtonSave();
 		setText("Bateau ajouté");
 	}
 
@@ -46,7 +42,7 @@ function Settings(props) {
 				return i !== index;
 			})
 		);
-		colorButtonSave();
+		// colorButtonSave();
 		setText("bateau supprimé");
 	}
 
@@ -55,23 +51,25 @@ function Settings(props) {
 		const idSize = "inputSize_" + index;
 		return (
 			<li key={index}>
-				<label htmlFor={idName}>Nom : </label>
-				<input
-					id={idName}
-					name={idName}
-					onChange={(target) => updateValue(target, index)}
-					type="text"
-					value={boat.name}
-				></input>
-				<br />
-				<label htmlFor={idSize}>Taille : </label>
-				<input
-					id={idSize}
-					nae={idSize}
-					onChange={(target) => updateValue(target, index)}
-					type="number"
-					value={boat.size}
-				></input>
+				<div className={`settings_boat_${index}`}>
+					<label htmlFor={idName}>Nom : </label>
+					<input
+						id={idName}
+						name={idName}
+						onChange={(target) => updateValue(target, index)}
+						type="text"
+						value={boat.name}
+					></input>
+					<br />
+					<label htmlFor={idSize}>Taille : </label>
+					<input
+						id={idSize}
+						name={idSize}
+						onChange={(target) => updateValue(target, index)}
+						type="number"
+						value={boat.size}
+					></input>
+				</div>
 				<button onClick={() => deleteBoat(index)}>Delete</button>
 			</li>
 		);
@@ -84,13 +82,13 @@ function Settings(props) {
 			<button id="addBoatButton" onClick={() => addBoat()}>
 				Add
 			</button>
-			<button id="buttonSaveBoats" onClick={() => props.onClick(boatList)}>
+			<button id="buttonSaveBoats" onClick={() => props.setBoats(boatList)}>
 				Save
 			</button>
 			<br />
 			{text}
 		</div>
 	);
-}
+};
 
 export default Settings;
