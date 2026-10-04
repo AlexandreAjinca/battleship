@@ -1,0 +1,151 @@
+.game h2::before {
+	display: block;
+	margin-bottom: 10px;
+	color: var(--ocean-400);
+	content: "FLOTTE  /  OPÉRATION EN COURS";
+	font-family: "Segoe UI", sans-serif;
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.16em;
+}
+
+.game-content {
+	display: grid;
+	grid-template-columns: minmax(300px, 1.15fr) minmax(280px, 0.85fr);
+	align-items: stretch;
+	gap: 24px;
+}
+
+.game-board,
+.info {
+	border: 1px solid var(--line);
+	border-radius: 16px;
+	background: var(--panel);
+	box-shadow: 0 20px 55px rgba(0, 0, 0, 0.18);
+}
+
+.game-board {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: clamp(16px, 3vw, 30px);
+}
+
+.game-board > div {
+	width: 100%;
+	max-width: 520px;
+}
+
+.board-row {
+	display: grid;
+	grid-template-columns: repeat(8, minmax(0, 1fr));
+}
+
+.square {
+	position: relative;
+	aspect-ratio: 1;
+	width: 100%;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 1px solid rgba(156, 211, 220, 0.15);
+	background:
+		linear-gradient(135deg, rgba(32, 101, 125, 0.24), rgba(12, 44, 65, 0.52)),
+		#102d42;
+	color: var(--ocean-400);
+	font-size: clamp(12px, 2vw, 18px);
+	font-weight: 700;
+	cursor: crosshair;
+	transition: background 140ms ease, border-color 140ms ease, transform 140ms ease;
+}
+
+.square:hover {
+	z-index: 1;
+	border-color: var(--ocean-400);
+	background: rgba(33, 182, 199, 0.3);
+	transform: scale(1.04);
+}
+
+.square:focus-visible {
+	z-index: 2;
+	outline: 2px solid var(--ocean-400);
+	outline-offset: -3px;
+}
+
+.info {
+	padding: 24px;
+	color: var(--muted);
+	line-height: 1.65;
+}
+
+.info table {
+	width: 100%;
+	margin-bottom: 22px;
+	border-collapse: collapse;
+	text-align: left;
+}
+
+.info th {
+	padding: 0 10px 12px;
+	border-bottom: 1px solid var(--line);
+	color: var(--muted);
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+
+.info td {
+	padding: 13px 10px;
+	border-bottom: 1px solid var(--line);
+	color: var(--ink);
+	font-size: 14px;
+}
+
+.info td:nth-child(2) {
+	color: var(--muted);
+	text-align: center;
+}
+
+.info td:last-child {
+	text-align: right;
+}
+
+.info button {
+	padding: 8px 12px;
+	border: 1px solid rgba(72, 212, 213, 0.32);
+	border-radius: 7px;
+	background: rgba(33, 182, 199, 0.1);
+	color: var(--ocean-400);
+	font-size: 12px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+}
+
+.info button:hover {
+	background: var(--ocean-500);
+	color: var(--navy-950);
+	transform: translateY(-1px);
+}
+
+.info > div {
+	margin-top: 14px;
+	color: var(--ink);
+	font-weight: 600;
+}
+
+.info > div button {
+	margin-top: 10px;
+}
+
+@media (max-width: 760px) {
+	.game-content {
+		grid-template-columns: 1fr;
+		gap: 16px;
+	}
+
+	.game-board {
+		padding: 16px;
+	}
+}

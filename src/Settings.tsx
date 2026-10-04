@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./Settings.css";
 
 const Settings = (props: { boats: any; setBoats: any }) => {
 	const [boatList, setBoatList] = useState(props.boats);
@@ -59,8 +60,7 @@ const Settings = (props: { boats: any; setBoats: any }) => {
 						onChange={(target) => updateValue(target, index)}
 						type="text"
 						value={boat.name}
-					></input>
-					<br />
+					/>
 					<label htmlFor={idSize}>Taille : </label>
 					<input
 						id={idSize}
@@ -68,7 +68,7 @@ const Settings = (props: { boats: any; setBoats: any }) => {
 						onChange={(target) => updateValue(target, index)}
 						type="number"
 						value={boat.size}
-					></input>
+					/>
 				</div>
 				<button onClick={() => deleteBoat(index)}>Delete</button>
 			</li>
