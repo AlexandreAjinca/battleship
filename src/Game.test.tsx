@@ -22,7 +22,11 @@ test("keeps player 2 boats selectable after player 1 finishes placement", () => 
 	for (const indexes of placementIndexes) {
 		fireEvent.click(screen.getAllByText("Sélectionner")[0]);
 		for (const index of indexes) {
-			fireEvent.click(container.querySelectorAll(".square")[index]);
+			const square = container.querySelectorAll<HTMLButtonElement>(".square")[index];
+			if (!square) {
+				throw new Error(`Square ${index} was not rendered`);
+			}
+			fireEvent.click(square);
 		}
 	}
 

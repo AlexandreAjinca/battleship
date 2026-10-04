@@ -1,13 +1,20 @@
 import React from "react";
+import type { GameBoat } from "./boat.types";
 
-const Boats = (props) => {
-	const boatList = props.boatList.map((boat, index) => {
+interface BoatsProps {
+	boatList: GameBoat[];
+	selectedBoatIndex: number | null;
+	onClick: (index: number) => void;
+}
+
+const Boats = ({ boatList, selectedBoatIndex, onClick }: BoatsProps) => {
+	const boatListRows = boatList.map((boat, index) => {
 		const buttonSelect = boat.placed ? (
 			"Placé"
-		) : boat === props.selectedBoat ? (
+		) : index === selectedBoatIndex ? (
 			"Sélectionné"
 		) : (
-			<button onClick={() => props.onClick(index)}>Sélectionner</button>
+			<button onClick={() => onClick(index)}>Sélectionner</button>
 		);
 
 		return (
@@ -28,7 +35,7 @@ const Boats = (props) => {
 						<th></th>
 					</tr>
 				</thead>
-				<tbody>{boatList}</tbody>
+				<tbody>{boatListRows}</tbody>
 			</table>
 		</div>
 	);

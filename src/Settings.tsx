@@ -1,29 +1,31 @@
 import React, { useState } from "react";
 import "./Settings.css";
+import type { Boat } from "./boat.types";
 
-const Settings = (props: { boats: any; setBoats: any }) => {
-	const [boatList, setBoatList] = useState(props.boats);
+interface SettingsProps {
+	boats: Boat[];
+	setBoats: React.Dispatch<React.SetStateAction<Boat[]>>;
+}
+
+type BoatField = "name" | "size";
+
+const Settings = ({ boats, setBoats }: SettingsProps) => {
+	const [boatList, setBoatList] = useState<Boat[]>(() => boats.map((boat) => ({ ...boat })));
 	const [text, setText] = useState("");
 
-	function updateValue(target, index) {
-		const id = target.target.id;
-		const value = target.target.value;
-		const newBoatList = boatList.slice();
-		if (id.includes("Name")) {
-			newBoatList[index].name = value;
-		} else if (id.includes("Size")) {
-			newBoatList[index].size = Number.parseInt(value);
-		}
-		// colorButtonSave();
-		setBoatList(newBoatList);
-		setText(id + " modifié");
+	function updateValue(
+		event: React.ChangeEvent<HTMLInputElement>,
+		index: number,
+		field: BoatField
+	) {
+		const value = field === "size" ? Number.parseInt(event.currentTarget.value, 10) : event.currentTarget.value;
+		setBoatList((currentBoats) =>
+			currentBoats.map((boat, boatIndex) =>
+				boatIndex === index ? { ...boat, [field]: value } : boat
+			)
+		);
+		setText(`${event.currentTarget.id} modifié`);
 	}
-
-	// function colorButtonSave() {
-	// 	var buttonSave = document.getElementById("buttonSaveBoats");
-	// 	if (buttonSave.style["background-color"] !== "lightGreen")
-	// 		buttonSave.style["background-color"] = "lightGreen";
-	// }
 
 	function addBoat() {
 		setBoatList([
@@ -33,17 +35,11 @@ const Settings = (props: { boats: any; setBoats: any }) => {
 				size: 1,
 			},
 		]);
-		// colorButtonSave();
 		setText("Bateau ajouté");
 	}
 
-	function deleteBoat(index) {
-		setBoatList(
-			boatList.filter((boat, i) => {
-				return i !== index;
-			})
-		);
-		// colorButtonSave();
+	function deleteBoat(index: number) {
+		setBoatList((currentBoats) => currentBoats.filter((_, boatIndex) => boatIndex !== index));
 		setText("bateau supprimé");
 	}
 
@@ -57,7 +53,7 @@ const Settings = (props: { boats: any; setBoats: any }) => {
 					<input
 						id={idName}
 						name={idName}
-						onChange={(target) => updateValue(target, index)}
+						onChange={(event) => updateValue(event, index, "name")}
 						type="text"
 						value={boat.name}
 					/>
@@ -65,7 +61,7 @@ const Settings = (props: { boats: any; setBoats: any }) => {
 					<input
 						id={idSize}
 						name={idSize}
-						onChange={(target) => updateValue(target, index)}
+						onChange={(event) => updateValue(event, index, "size")}
 						type="number"
 						value={boat.size}
 					/>
@@ -82,7 +78,7 @@ const Settings = (props: { boats: any; setBoats: any }) => {
 			<button id="addBoatButton" onClick={() => addBoat()}>
 				Add
 			</button>
-			<button id="buttonSaveBoats" onClick={() => props.setBoats(boatList)}>
+			<button id="buttonSaveBoats" onClick={() => setBoats(boatList)}>
 				Save
 			</button>
 			<br />

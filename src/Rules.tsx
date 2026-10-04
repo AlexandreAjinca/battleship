@@ -1,7 +1,7 @@
 import React from "react";
 import "./Rules.css";
 
-const Rules = (props) => {
+const Rules = () => {
 	return (
 		<div className="rules">
 			<h1>Règles</h1>
