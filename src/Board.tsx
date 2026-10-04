@@ -8,33 +8,25 @@ const Square = (props) => {
 	);
 };
 
-const Board = (props) => {
-	const renderSquare = (i) => {
-		return <Square key={i} value={props.squares[i]} onClick={() => props.onClick(i)} />;
-	};
+const Board = ({ squares, onClick, size = 8 }) => {
+	const rows = [];
 
-	const size = 8;
-	const squares: any[] = [];
-	var rows;
-	for (let i = 0; i < size; i++) {
-		rows = [];
-		for (let j = 0; j < size; j++) {
-			rows.push(renderSquare(i * size + j));
-		}
-		squares.push(rows);
-	}
-
-	const board = squares.map((row, index) => {
-		for (let i = 0; i < size; i++) {
-			return (
-				<div key={"row" + index} className="board-row">
-					{row}
-				</div>
+	for (let rowIndex = 0; rowIndex < size; rowIndex++) {
+		const cells = [];
+		for (let columnIndex = 0; columnIndex < size; columnIndex++) {
+			const index = rowIndex * size + columnIndex;
+			cells.push(
+				<Square key={index} value={squares[index]} onClick={() => onClick(index)} />
 			);
 		}
-	});
+		rows.push(
+			<div key={"row" + rowIndex} className="board-row">
+				{cells}
+			</div>
+		);
+	}
 
-	return <div>{board}</div>;
+	return <div>{rows}</div>;
 };
 
 export default Board;

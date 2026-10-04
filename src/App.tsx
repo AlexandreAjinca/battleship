@@ -6,7 +6,7 @@ import Settings from "./Settings.tsx";
 import Rules from "./Rules.tsx";
 
 export const App = (props) => {
-	const [board, setBoard] = useState({
+	const [board] = useState({
 		size: 8,
 	});
 	const [boats, setBoats] = useState(jsonBoats);

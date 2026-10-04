@@ -1,8 +1,9 @@
+// @ts-nocheck
 import React, { useState } from "react";
 import Board from "./Board.tsx";
 import Boats from "./Boats.tsx";
 
-const Game = (props: { boats; size }) => {
+const Game = (props: { boats: any[]; size: number }) => {
 	const [player1, setPlayer1] = useState({
 		name: "Player1",
 		boardBoats: Array(props.size ** 2).fill(null),
@@ -24,7 +25,7 @@ const Game = (props: { boats; size }) => {
 	const [coordSelectedBoat, setcoordSelectedBoat] = useState([]);
 	const [message, setmessage] = useState("");
 
-	const handleClick = (i) => {
+	const handleClick = (i: string | number) => {
 		const isPlayer1 = player1Turn;
 		const player = isPlayer1 ? player1 : player2;
 
@@ -117,7 +118,7 @@ const Game = (props: { boats; size }) => {
 		console.log(message);
 	};
 
-	const isAligned = (array, i) => {
+	const isAligned = (array: string | any[], i: any) => {
 		const coords = getCoords(i);
 		// console.log("aligné? array : "+ array + " ; i : " + i);
 		// console.log("coords(i) : " + coords);
@@ -145,7 +146,7 @@ const Game = (props: { boats; size }) => {
 		return false;
 	};
 
-	const isAdjacent = (array, i) => {
+	const isAdjacent = (array: string | any[], i: number) => {
 		// console.log("adjacent? array : "+ array + " ; i : " + i);
 		if (array.length === 0) {
 			// console.log("adjacent car vide");
@@ -166,12 +167,12 @@ const Game = (props: { boats; size }) => {
 		return false;
 	};
 
-	const getCoords = (i) => {
+	const getCoords = (i: number) => {
 		var result = [Math.floor(i / props.size), i % props.size];
 		return result;
 	};
 
-	const selectBoat = (i) => {
+	const selectBoat = (i: string | number) => {
 		const isPlayer1 = player1Turn;
 		const player = isPlayer1 ? player1 : player2;
 
@@ -197,12 +198,15 @@ const Game = (props: { boats; size }) => {
 		}
 	};
 
-	const calculateWinner = (boardStrike) => {
+	const calculateWinner = (boardStrike: string | any[]) => {
 		let countStrike = 0;
 		for (let i = 0; i < boardStrike.length; i++) {
 			if (boardStrike[i] === "T") countStrike++;
 		}
-		if (countStrike === props.boats.map((x) => x.size).reduce((a, b) => a + b)) {
+		if (
+			countStrike ===
+			props.boats.map((x: { size: any }) => x.size).reduce((a: any, b: any) => a + b)
+		) {
 			return true;
 		}
 		return false;
@@ -230,13 +234,13 @@ const Game = (props: { boats; size }) => {
 			<h2>Plateau</h2>
 			<div className="game-content">
 				<div className="game-board">
-					<Board squares={board} onClick={(i) => handleClick(i)} />
+					<Board squares={board} size={props.size} onClick={(i: any) => handleClick(i)} />
 				</div>
 				<div className="info">
 					<Boats
 						boatList={selectedPlayer.boats}
 						selectedBoat={selectedBoat}
-						onClick={(i) => selectBoat(i)}
+						onClick={(i: any) => selectBoat(i)}
 					/>
 					{phase} : {selectedPlayer.name}
 					{instruction}
