@@ -8,14 +8,14 @@ const Game = (props: { boats: any[]; size: number }) => {
 		name: "Player1",
 		boardBoats: Array(props.size ** 2).fill(null),
 		boardStrike: Array(props.size ** 2).fill(null),
-		boats: props.boats,
+		boats: props.boats.map((boat: any) => ({ ...boat, placed: false })),
 	});
 
 	const [player2, setPlayer2] = useState({
 		name: "Player2",
 		boardBoats: Array(props.size ** 2).fill(null),
 		boardStrike: Array(props.size ** 2).fill(null),
-		boats: props.boats,
+		boats: props.boats.map((boat: any) => ({ ...boat, placed: false })),
 	});
 
 	const [player1Turn, setPlayer1Turn] = useState(true);
