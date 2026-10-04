@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import jsonBoats from "./data/boats.json";
 import { Link, Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Game from "./Game.tsx";
-import Settings from "./Settings.tsx";
-import Rules from "./Rules.tsx";
+import Game from "./Game";
+import Settings from "./Settings";
+import Rules from "./Rules";
+import type { Boat } from "./boat.types";
 
-export const App = (props) => {
-	const [board] = useState({
-		size: 8,
-	});
-	const [boats, setBoats] = useState(jsonBoats);
+export const App = () => {
+	const [boats, setBoats] = useState<Boat[]>(jsonBoats);
 
 	return (
 		<Router>
@@ -21,7 +19,7 @@ export const App = (props) => {
 				</nav>
 				<div className="content">
 					<Routes>
-						<Route path="/game" element={<Game boats={boats} size={board.size} />} />
+						<Route path="/game" element={<Game boats={boats} size={8} />} />
 						<Route path="/settings" element={<Settings boats={boats} setBoats={setBoats} />} />
 						<Route path="/rules" element={<Rules />} />
 					</Routes>

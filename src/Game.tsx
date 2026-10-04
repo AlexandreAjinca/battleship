@@ -1,108 +1,109 @@
-// @ts-nocheck
 import React, { useState } from "react";
 import "./Game.css";
-import Board from "./Board.tsx";
-import Boats from "./Boats.tsx";
+import Board from "./Board";
+import Boats from "./Boats";
+import type { Boat, GameBoat } from "./boat.types";
 
-const Game = (props: { boats: any[]; size: number }) => {
-	const [player1, setPlayer1] = useState({
-		name: "Player1",
-		boardBoats: Array(props.size ** 2).fill(null),
-		boardStrike: Array(props.size ** 2).fill(null),
-		boats: props.boats.map((boat: any) => ({ ...boat, placed: false })),
-	});
+interface GameProps {
+	boats: Boat[];
+	size: number;
+}
 
-	const [player2, setPlayer2] = useState({
-		name: "Player2",
-		boardBoats: Array(props.size ** 2).fill(null),
-		boardStrike: Array(props.size ** 2).fill(null),
-		boats: props.boats.map((boat: any) => ({ ...boat, placed: false })),
-	});
+interface Player {
+	name: string;
+	boardBoats: (string | null)[];
+	boardStrike: (string | null)[];
+	boats: GameBoat[];
+}
 
+const createPlayer = (name: string, boats: Boat[], size: number): Player => ({
+	name,
+	boardBoats: Array(size ** 2).fill(null),
+	boardStrike: Array(size ** 2).fill(null),
+	boats: boats.map((boat) => ({ ...boat, placed: false })),
+});
+
+const Game = ({ boats, size }: GameProps) => {
+	const [player1, setPlayer1] = useState(() => createPlayer("Player1", boats, size));
+	const [player2, setPlayer2] = useState(() => createPlayer("Player2", boats, size));
 	const [player1Turn, setPlayer1Turn] = useState(true);
 	const [placementPhase, setPlacementPhase] = useState(true);
-	const [selectedBoat, setSelectedBoat] = useState(null);
-	const [indexSelectedBoat, setindexSelectedBoat] = useState(null);
-	const [coordSelectedBoat, setcoordSelectedBoat] = useState([]);
-	const [message, setmessage] = useState("");
+	const [selectedBoat, setSelectedBoat] = useState<GameBoat | null>(null);
+	const [indexSelectedBoat, setIndexSelectedBoat] = useState<number | null>(null);
+	const [coordSelectedBoat, setCoordSelectedBoat] = useState<number[]>([]);
+	const [message, setMessage] = useState("");
 
-	const handleClick = (i: string | number) => {
+	const calculateWinner = (boardStrike: (string | null)[]) => {
+		const hits = boardStrike.filter((square) => square === "T").length;
+		const fleetSize = boats.reduce((total, boat) => total + boat.size, 0);
+		return hits === fleetSize;
+	};
+
+	const handleClick = (index: number) => {
 		const isPlayer1 = player1Turn;
-		const player = isPlayer1 ? player1 : player2;
+		const currentPlayer = isPlayer1 ? player1 : player2;
 
-		const isPlacementPhase = placementPhase;
-		const board = isPlacementPhase ? player.boardBoats : player.boardStrike;
-
-		if (calculateWinner(board) && !isPlacementPhase) {
+		if (!placementPhase && calculateWinner(currentPlayer.boardStrike)) {
 			return;
 		}
 
-		if (board[i] != null) {
-			setmessage("Emplacement occupé!");
+		const player: Player = {
+			...currentPlayer,
+			boardBoats: [...currentPlayer.boardBoats],
+			boardStrike: [...currentPlayer.boardStrike],
+			boats: currentPlayer.boats.map((boat) => ({ ...boat })),
+		};
+		const board = placementPhase ? player.boardBoats : player.boardStrike;
+
+		if (board[index] !== null) {
+			setMessage("Emplacement occupé!");
 			return;
 		}
 
-		let message = "";
+		let nextMessage = "";
 
-		if (isPlacementPhase) {
-			/*Phase de placement*/
-			if (selectedBoat) {
-				/*Bateau sélectionné*/
-				// console.log("il y a un bateau sélectionné");
-				let coords = coordSelectedBoat.slice();
-				if (isAligned(coords, i) && isAdjacent(coords, i)) {
-					/*La case est alignée avec le reste*/
-					// console.log("aligné et adjacent");
-					coords.push(i);
-					board[i] = selectedBoat.name[0];
-					if (coords.length === selectedBoat.size) {
-						/*On vient de placer la dernière case du bateau*/
-						// console.log("fin du bateau");
-						message += "Bateau placé";
-						selectedBoat.placed = true;
-						coords = [];
-						player.boats[indexSelectedBoat] = selectedBoat;
-						setSelectedBoat(null);
-						setindexSelectedBoat(null);
-						console.log("player.boats : " + player.boats);
-						let allBoatsPlaced = true;
-						for (let i = 0; i < player.boats.length; i++) {
-							console.log("playerBoats[i] : " + player.boats[i]);
-							if (!player.boats[i].placed) {
-								allBoatsPlaced = false;
-							}
-						}
-						if (allBoatsPlaced) {
-							console.log("tous les bateaux sont placés");
-							setPlayer1Turn(!isPlayer1);
+		if (placementPhase) {
+			if (selectedBoat === null || indexSelectedBoat === null) {
+				setMessage("Il faut sélectionner un bateau");
+				return;
+			}
 
-							if (!isPlayer1) {
-								setPlacementPhase(!isPlacementPhase);
-							}
-						}
+			if (!isAligned(coordSelectedBoat, index) || !isAdjacent(coordSelectedBoat, index)) {
+				setMessage("Le point n'est pas aligné ou pas adjacent");
+				return;
+			}
+
+			const coords = [...coordSelectedBoat, index];
+			player.boardBoats[index] = selectedBoat.name.charAt(0);
+
+			if (coords.length === selectedBoat.size) {
+				player.boats[indexSelectedBoat] = { ...selectedBoat, placed: true };
+				nextMessage = "Bateau placé";
+				setSelectedBoat(null);
+				setIndexSelectedBoat(null);
+				setCoordSelectedBoat([]);
+
+				if (player.boats.every((boat) => boat.placed)) {
+					setPlayer1Turn(!isPlayer1);
+					if (!isPlayer1) {
+						setPlacementPhase(false);
 					}
-					player.boardBoats = board;
-					setcoordSelectedBoat(coords);
-				} else {
-					message += "Le point n'est pas aligné ou pas adjacent";
 				}
 			} else {
-				/*Pas de bateau sélectionné*/
-				message += "Il faut sélectionner un bateau";
+				setCoordSelectedBoat(coords);
 			}
 		} else {
-			/*Phase d'attaque*/
 			const opponent = isPlayer1 ? player2 : player1;
-			if (opponent.boardBoats[i] != null) {
-				board[i] = "T";
-				message += " TOUCHÉ! ";
+			if (opponent.boardBoats[index] !== null) {
+				player.boardStrike[index] = "T";
+				nextMessage = " TOUCHÉ! ";
 			} else {
-				board[i] = "O";
-				message += " PLOUF! ";
+				player.boardStrike[index] = "O";
+				nextMessage = " PLOUF! ";
 			}
-			player.boardStrike = board;
-			if (calculateWinner(board)) {
-				message += player.name + " A GAGNÉ !!!";
+
+			if (calculateWinner(player.boardStrike)) {
+				nextMessage += `${player.name} A GAGNÉ !!!`;
 			} else {
 				setPlayer1Turn(!isPlayer1);
 			}
@@ -110,118 +111,70 @@ const Game = (props: { boats: any[]; size: number }) => {
 
 		if (isPlayer1) {
 			setPlayer1(player);
-			setmessage(message);
 		} else {
 			setPlayer2(player);
-			setmessage(message);
 		}
-
-		console.log(message);
+		setMessage(nextMessage);
 	};
 
-	const isAligned = (array: string | any[], i: any) => {
-		const coords = getCoords(i);
-		// console.log("aligné? array : "+ array + " ; i : " + i);
-		// console.log("coords(i) : " + coords);
-		if (array.length === 0) {
-			// console.log("aligné car vide");
-			return true;
-		} else if (array.length === 1) {
-			const coords1 = getCoords(array[0]);
-			// console.log("taille 1, coords : "+ coords1 );
-			if (coords1[0] === coords[0] || coords1[1] === coords[1]) {
-				// console.log("aligné");
-				return true;
-			}
-		} else if (array.length >= 2) {
-			const coords1 = getCoords(array[0]);
-			const coords2 = getCoords(array[array.length - 1]);
-			if (
-				(coords1[0] === coords[0] || coords1[1] === coords[1]) &&
-				(coords2[0] === coords[0] || coords2[1] === coords[1])
-			) {
-				// console.log("aligné");
-				return true;
-			}
-		}
-		return false;
-	};
+	const getCoords = (index: number): [number, number] => [
+		Math.floor(index / size),
+		index % size,
+	];
 
-	const isAdjacent = (array: string | any[], i: number) => {
-		// console.log("adjacent? array : "+ array + " ; i : " + i);
-		if (array.length === 0) {
-			// console.log("adjacent car vide");
+	const isAligned = (coords: number[], index: number) => {
+		if (coords.length === 0) {
 			return true;
 		}
-		for (let j = 0; j < array.length; j++) {
-			if (
-				array[j] === i + 1 ||
-				array[j] === i - 1 ||
-				array[j] === i + props.size ||
-				array[j] === i - props.size
-			) {
-				// console.log("adjacent");
-				return true;
-			}
+
+		const [row, column] = getCoords(index);
+		const [firstRow, firstColumn] = getCoords(coords[0]);
+		if (coords.length === 1) {
+			return firstRow === row || firstColumn === column;
 		}
-		// console.log("pas adjacent");
-		return false;
+
+		const [lastRow] = getCoords(coords[coords.length - 1]);
+		return firstRow === lastRow ? row === firstRow : column === firstColumn;
 	};
 
-	const getCoords = (i: number) => {
-		var result = [Math.floor(i / props.size), i % props.size];
-		return result;
+	const isAdjacent = (coords: number[], index: number) => {
+		if (coords.length === 0) {
+			return true;
+		}
+
+		const [row, column] = getCoords(index);
+		return coords.some((coord) => {
+			const [placedRow, placedColumn] = getCoords(coord);
+			return Math.abs(placedRow - row) + Math.abs(placedColumn - column) === 1;
+		});
 	};
 
-	const selectBoat = (i: string | number) => {
+	const selectBoat = (index: number) => {
 		const isPlayer1 = player1Turn;
-		const player = isPlayer1 ? player1 : player2;
+		const currentPlayer = isPlayer1 ? player1 : player2;
+		const player = { ...currentPlayer, boardBoats: [...currentPlayer.boardBoats] };
 
-		const boats = player.boats.slice();
-		const board = player.boardBoats.slice();
-		const coords = coordSelectedBoat.slice();
-		if (selectedBoat && coords.length > 0) {
-			for (let i = 0; i < coords.length; i++) {
-				board[coords[i]] = null;
-			}
-		}
-		player.boardBoats = board;
+		coordSelectedBoat.forEach((coord) => {
+			player.boardBoats[coord] = null;
+		});
+
 		if (isPlayer1) {
 			setPlayer1(player);
-			setcoordSelectedBoat([]);
-			setSelectedBoat(boats[i]);
-			setindexSelectedBoat(i);
 		} else {
 			setPlayer2(player);
-			setcoordSelectedBoat([]);
-			setSelectedBoat(boats[i]);
-			setindexSelectedBoat(i);
 		}
-	};
 
-	const calculateWinner = (boardStrike: string | any[]) => {
-		let countStrike = 0;
-		for (let i = 0; i < boardStrike.length; i++) {
-			if (boardStrike[i] === "T") countStrike++;
-		}
-		if (
-			countStrike ===
-			props.boats.map((x: { size: any }) => x.size).reduce((a: any, b: any) => a + b)
-		) {
-			return true;
-		}
-		return false;
+		setCoordSelectedBoat([]);
+		setSelectedBoat(currentPlayer.boats[index]);
+		setIndexSelectedBoat(index);
 	};
 
 	const selectedPlayer = player1Turn ? player1 : player2;
-	//console.log("selected player : " + selectedPlayer);
 	const board = placementPhase ? selectedPlayer.boardBoats : selectedPlayer.boardStrike;
-	// console.log("selected player board : " + selectedPlayer.boardBoats);
-	// console.log("board : " + board );
-	const phase = placementPhase ? "Phase de placement " : " Phase d'attaque ";
-	const instruction = selectedBoat ? (
+	const phase = placementPhase ? "Phase de placement" : "Phase d'attaque";
+	const instruction = selectedBoat !== null && indexSelectedBoat !== null ? (
 		<div>
-			{"Placez ce bateau "} <br />
+			{"Placez ce bateau"} <br />
 			<button onClick={() => selectBoat(indexSelectedBoat)}>Réinitialiser bateau</button>
 		</div>
 	) : placementPhase ? (
@@ -235,13 +188,13 @@ const Game = (props: { boats: any[]; size: number }) => {
 			<h2>Plateau</h2>
 			<div className="game-content">
 				<div className="game-board">
-					<Board squares={board} size={props.size} onClick={(i: any) => handleClick(i)} />
+					<Board squares={board} size={size} onClick={handleClick} />
 				</div>
 				<div className="info">
 					<Boats
 						boatList={selectedPlayer.boats}
-						selectedBoat={selectedBoat}
-						onClick={(i: any) => selectBoat(i)}
+						selectedBoatIndex={indexSelectedBoat}
+						onClick={selectBoat}
 					/>
 					{phase} : {selectedPlayer.name}
 					{instruction}

@@ -1,14 +1,25 @@
 import React from "react";
 
-const Square = (props) => {
+interface SquareProps {
+	value: string | null;
+	onClick: () => void;
+}
+
+interface BoardProps {
+	squares: (string | null)[];
+	onClick: (index: number) => void;
+	size?: number;
+}
+
+const Square = ({ value, onClick }: SquareProps) => {
 	return (
-		<button className="square" onClick={props.onClick}>
-			{props.value}
+		<button className="square" onClick={onClick}>
+			{value}
 		</button>
 	);
 };
 
-const Board = ({ squares, onClick, size = 8 }) => {
+const Board = ({ squares, onClick, size = 8 }: BoardProps) => {
 	const rows = [];
 
 	for (let rowIndex = 0; rowIndex < size; rowIndex++) {
@@ -20,7 +31,7 @@ const Board = ({ squares, onClick, size = 8 }) => {
 			);
 		}
 		rows.push(
-			<div key={"row" + rowIndex} className="board-row">
+			<div key={rowIndex} className="board-row">
 				{cells}
 			</div>
 		);
