@@ -1,0 +1,31 @@
+.rules {
+	padding: clamp(22px, 4vw, 36px);
+	border: 1px solid var(--line);
+	border-radius: 16px;
+	background: var(--panel);
+	box-shadow: 0 20px 55px rgba(0, 0, 0, 0.18);
+}
+
+.rules p {
+	max-width: 720px;
+	padding: 14px 16px;
+	border-left: 2px solid var(--ocean-500);
+	background: rgba(7, 21, 34, 0.25);
+	color: #c0d2d9;
+	line-height: 1.7;
+}
+
+.rules-hit {
+	color: #ffbd69;
+	font-weight: 700;
+}
+
+.rules-sunk {
+	color: #ff7373;
+	font-weight: 700;
+}
+
+.rules-miss {
+	color: var(--ocean-400);
+	font-weight: 700;
+}

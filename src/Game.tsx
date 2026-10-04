@@ -1,5 +1,6 @@
 // @ts-nocheck
 import React, { useState } from "react";
+import "./Game.css";
 import Board from "./Board.tsx";
 import Boats from "./Boats.tsx";
 
